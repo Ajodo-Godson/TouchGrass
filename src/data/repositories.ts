@@ -3,6 +3,7 @@
 // Supabase-backed (production) or in-memory fakes (tests + parallel UI dev).
 import type { BadgeName } from "../core/badges";
 import type { Hangout, HangoutWithPoster, NewHangout, Profile } from "./types";
+import type { CommentWithAuthor } from "./types";
 
 export interface ProfileRepo {
   create(userId: string, displayName: string): Promise<Profile>; // 1.3
@@ -25,8 +26,10 @@ export interface CheerRepo {
 }
 
 export interface CommentRepo {
-  add(hangoutId: string, userId: string, body: string): Promise<void>;
+  // Returns the created comment so callers can render it without a full reload (4.4).
+  add(hangoutId: string, userId: string, body: string): Promise<CommentWithAuthor>;
   countFor(hangoutId: string): Promise<number>; // 4.4
+  listFor(hangoutId: string): Promise<CommentWithAuthor[]>; // oldest-first thread (4.4)
 }
 
 export interface BadgeRepo {
